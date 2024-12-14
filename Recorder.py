@@ -3,18 +3,18 @@ import numpy as np
 import tkinter as tk
 from tkinter import messagebox
 from threading import Thread
-import mss  # Using mss for screen capture
+import mss  
 
-# Set the screen resolution
+
 screen_resolution = (1920, 1080)
 
-# Define the video codec
+
 video_codec = cv2.VideoWriter_fourcc(*"XVID")
 
-# Name the output video file
+
 output_filename = "ScreenCapture.avi"
 
-# Set the frames per second (fps)
+
 frame_rate = 60.0
 
 class ScreenRecorder:
@@ -26,33 +26,29 @@ class ScreenRecorder:
 
     def start_recording(self):
         self.is_recording = True
-        num_frames = int(self.frame_rate * 10)  # Capturing for 10 seconds
+        num_frames = int(self.frame_rate * 10)  
 
         video_writer = cv2.VideoWriter(self.output_filename, video_codec, self.frame_rate, self.screen_resolution)
 
-        with mss.mss() as sct:  # Use mss to capture the screen
+        with mss.mss() as sct:  
             for _ in range(num_frames):
                 if not self.is_recording:
                     break
 
-                # Capture the screen
-                screenshot = sct.grab(sct.monitors[1])  # Capture primary monitor
+              
+                screenshot = sct.grab(sct.monitors[1])  
 
-                # Convert the screenshot to a numpy array
+                
                 frame_array = np.array(screenshot)
 
-                # Convert BGRA to RGB
+           
                 frame_rgb = cv2.cvtColor(frame_array, cv2.COLOR_BGRA2RGB)
 
-                # Write the frame to the video
                 video_writer.write(frame_rgb)
 
-                # Optional: If you want to see the current frame without GUI, you can print or log it.
-                # For example, to log the frame shape:
-                # print(frame_rgb.shape)
+                
 
         video_writer.release()
-        # No need for cv2.destroyAllWindows() since we are not using OpenCV windows
 
     def stop_recording(self):
         self.is_recording = False
@@ -67,7 +63,7 @@ class App(tk.Tk):
 
         self.recorder = ScreenRecorder(output_filename, screen_resolution, frame_rate)
 
-        # UI Elements
+     
         self.start_button = tk.Button(self, text="Start Recording", command=self.start_recording, bg="green", fg="white", font=('calibri', 14))
         self.start_button.pack(pady=20)
 
@@ -83,7 +79,7 @@ class App(tk.Tk):
         self.start_button.config(state=tk.DISABLED)
         self.stop_button.config(state=tk.NORMAL)
 
-        # Start recording in a new thread to avoid blocking the UI
+      
         self.recording_thread = Thread(target=self.recorder.start_recording)
         self.recording_thread.start()
 
@@ -94,7 +90,7 @@ class App(tk.Tk):
         self.stop_button.config(state=tk.DISABLED)
         messagebox.showinfo("Recording Stopped", "Screen recording has been saved.")
 
-# Main Program
+
 if __name__ == "__main__":
     app = App()
     app.mainloop()
